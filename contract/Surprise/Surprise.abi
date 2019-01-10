@@ -1,7 +1,79 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Jan 10 14:59:11 2019",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Jan 10 17:21:40 2019",
     "version": "eosio::abi/1.0",
     "structs": [
+        {
+            "name": "add",
+            "base": "",
+            "fields": [
+                {
+                    "name": "author",
+                    "type": "name"
+                },
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "item_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "item_name",
+                    "type": "string"
+                },
+                {
+                    "name": "winumber",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "checkbyid",
+            "base": "",
+            "fields": [
+                {
+                    "name": "author",
+                    "type": "name"
+                },
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "checkn",
+            "base": "",
+            "fields": [
+                {
+                    "name": "author",
+                    "type": "name"
+                },
+                {
+                    "name": "number",
+                    "type": "int32"
+                }
+            ]
+        },
+        {
+            "name": "create",
+            "base": "",
+            "fields": [
+                {
+                    "name": "author",
+                    "type": "name"
+                },
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "project_name",
+                    "type": "string"
+                }
+            ]
+        },
         {
             "name": "showinfo",
             "base": "",
@@ -10,6 +82,26 @@
     ],
     "types": [],
     "actions": [
+        {
+            "name": "add",
+            "type": "add",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "checkbyid",
+            "type": "checkbyid",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "checkn",
+            "type": "checkn",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "create",
+            "type": "create",
+            "ricardian_contract": ""
+        },
         {
             "name": "showinfo",
             "type": "showinfo",

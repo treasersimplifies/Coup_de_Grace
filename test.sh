@@ -9,6 +9,7 @@ nodeos -e -p eosio --plugin eosio::producer_plugin --plugin eosio::chain_api_plu
 # 1. Create new wallet with the name "cdg"(or whatever name you like) for this project
 cleos wallet create -n cdg --to-console
 ##// my key(for test only): PW5KfKXy8qXD3JbKZ3RosqS6PYfm9eBjx2mHveVm4T4dfz7d4LrFE
+cleos wallet unlock -n cdg
 
 # 2. Generate two pair of keys (use the command twice for an account OwnerKey and ActiveKey 2-level authority)
 cleos create key --to-console
@@ -54,7 +55,7 @@ cleos wallet import -n cdg
 # you probably should add the private key of the "eosio" account to your wallet. 
 cleos wallet import --private-key=5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3 -n cdg
 
-# 5. Create the account using the public keys
+# 5. Create the account using the public keys (will be destoryed if nodeos restart)
 # for contract account:
 cleos create account eosio pa EOS5rhWHPySUdtDTPWMkqiatv3xgU2EPwKnjSe4Vr3eYFUA1dPPeB EOS8XjjYgLcUkBbHYSacgsx2CRnbToApiwkNoaEk5ft9FfMxWgYJj
 # for test accounts:
@@ -81,6 +82,21 @@ cleos set contract pa /Users/treasersmac/programming/EOS/Dapps/Coup_de_Grace/con
 cleos push action pa showinfo '[]' -p vanel@active 
 # or:
 cleos push action pa showinfo '[]' -p vanel@active --json
+
+# test Suprise::create action
+cleos push action pa create '["vanel","1","testlottery"]' -p vanel@active
+cleos push action pa create '["vanel","2","yearconf"]' -p vanel@active
+cleos push action pa create '["vanel","3","yearconf2"]' -p vanel@active
+# test Suprise::checkbyid action
+cleos push action pa checkbyid '["vanel","1"]' -p vanel@active
+cleos push action pa checkbyid '["vanel","2"]' -p vanel@active
+cleos push action pa checkbyid '["vanel","3"]' -p vanel@active
+# test Suprise::checkn action
+cleos push action pa checkn '["vanel","2"]' -p vanel@active 
+# test Suprise::add action
+cleos push action pa add '["vanel","1","1","XiaoMi Phone","5"]' -p vanel@active 
+
+
 
 ##################### the below waiting to be done #####################
 
