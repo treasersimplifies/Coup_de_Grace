@@ -1,7 +1,8 @@
 #include <eosiolib/eosio.hpp>
 #include <eosiolib/print.hpp>
 #include <string>
-#include <random>
+#include <eosiolib/crypto.h>
+#include <eosiolib/transaction.hpp>
 
 namespace Coup_de_Grace{
     using namespace eosio;
@@ -45,6 +46,8 @@ namespace Coup_de_Grace{
             void checkn(const account_name author,int number);
             [[eosio::action]]
             void additem(const account_name author, uint64_t project_id, uint64_t item_id, string& item_name, uint32_t winumber, uint32_t maxnumber);
+            // [[eosio::action]]
+            // void modifitem(const account_name author, uint64_t project_id, uint64_t item_id, string& item_name, uint32_t winumber, uint32_t maxnumber);
             [[eosio::action]]
             void addcad(const account_name author, uint64_t project_id, uint64_t item_id, string& cadname);
             [[eosio::action]]
@@ -53,5 +56,5 @@ namespace Coup_de_Grace{
             typedef multi_index<N(surpriseprj), surpriseprj> surpriseprjIndex;
     };
 
-    EOSIO_ABI(Surprise, (showinfo)(create)(checkbyid)(checkn)(additem)(addcad)(activate))
+    EOSIO_ABI(Surprise, (showinfo)(create)(checkbyid)(checkn)(additem)(addcad)(activate))//(modifitem)
 }

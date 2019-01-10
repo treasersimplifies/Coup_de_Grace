@@ -94,58 +94,21 @@ cleos push action pa checkbyid '["vanel","3"]' -p vanel@active
 # test Suprise::checkn action
 cleos push action pa checkn '["vanel","2"]' -p vanel@active 
 # test Suprise::add action
-cleos push action pa add '["vanel","1","1","XiaoMi Phone","5"]' -p vanel@active 
+## old//cleos push action pa additem '["vanel","1","1","XiaoMi Phone","5"]' -p vanel@active 
+cleos push action pa additem '["vanel","1","1","XiaoMi Phone","5","25"]' -p vanel@active # 5 out of 25
+cleos push action pa checkbyid '["vanel","1"]' -p vanel@active
+cleos push action pa addcad '["vanel","1","1","18258583270"]' -p vanel@active 
+cleos push action pa activate '["vanel","1","1"]' -p vanel@active 
+cleos push action pa checkn '["vanel","3"]' -p vanel@active
 
+cleos push action pa additem '["vanel","1","2","iPhone XS","2","25"]' -p vanel@active # 5 out of 25
+cleos push action pa addcad '["vanel","1","2","007"]' -p vanel@active
+cleos push action pa addcad '["vanel","1","2","stevejobs"]' -p vanel@active
+cleos push action pa addcad '["vanel","1","2","jackma"]' -p vanel@active
+cleos push action pa addcad '["vanel","1","2","billgates"]' -p vanel@active
+cleos push action pa addcad '["vanel","1","2","wuuzhaohui"]' -p vanel@active
+cleos push action pa addcad '["vanel","1","2","jaychou"]' -p vanel@active
+cleos push action pa activate '["vanel","1","2"]' -p vanel@active
+cleos push action pa checkbyid '["vanel","1"]' -p vanel@active
+cleos push action pa checkn '["vanel","3"]' -p vanel@active
 
-
-##################### the below waiting to be done #####################
-
-# test Suprise::update action
-
-# test Suprise::addtitle action : Succeed !
-cleos push action dota addtitle '{"account":"testhero","atitle":{"title_id":1,"name":"GoldCity","num":10}}' -p testhero@active
-cleos push action dota getplayer '["testhero"]' -p testhero@active
-cleos push action dota addtitle '{"account":"testhero","atitle":{"title_id":2,"name":"hhh","num":9}}' -p testhero@active
-cleos push action dota getplayer '["testhero"]' -p testhero@active
-
-
-# 10. Deploy the Citygroup contract
-cleos set contract fy /Users/treasersmac/programming/EOS/Dapps/DeeroftheAntihero/contracts/Citygroup -p fy@active
-
-
-# 10. Test the Citygroup contract
-# In order to test it, first list all players to make clear their account_names
-# Player::playergetall action 
-cleos push action dota playergetall '["testhero"]' -p testhero@active
-
-# test Citygroup::cityinit action
-cleos push action fy cityinit '["testhero"]' -p testhero@active # Transaction should have at least one required authority
-
-# test Citygroup::getbyid action
-cleos push action fy getcitybyid '[1]' -p testhero@active
-cleos push action fy getcitybyid '[2]' -p testhero@active
-
-# test Citygroup::citylistall action
-cleos push action fy citylistall '[]' -p testhero@active
-
-# test Citygroup::declarewar action
-cleos push action fy declarewar '["testhero",1,1]' -p testhero@active
-cleos push action fy declarewar '["testhero",1,2]' -p testhero@active
-
-# test Citygroup::getbattle action
-cleos push action fy getbattle '[1]' -p testhero@active
-
-# test Citygroup::attack action
-cleos push action fy attack '["testhero",1,10,"(3/3+2)*8",1]' -p testhero@active
-# test more ... 
-cleos push action fy declarewar '["testhero",1,2]' -p testhero@active
-cleos push action fy attack '["testhero",2,10,"(3/3+2)*8",1]' -p testhero@active
-cleos push action fy getbattle '[2]' -p testhero@active
-
-cleos push action fy declarewar '["testhero",1,3]' -p testhero@active
-cleos push action fy attack '["testhero",3,10,"(3/3+2)*8",1]' -p testhero@active
-cleos push action fy getbattle '[3]' -p testhero@active
-
-cleos push action fy declarewar '["testhero",1,4]' -p testhero@active
-cleos push action fy attack '["testhero",4,10,"(3/3+2)*8",1]' -p testhero@active
-cleos push action fy getbattle '[4]' -p testhero@active

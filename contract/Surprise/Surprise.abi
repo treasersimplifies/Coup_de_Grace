@@ -1,9 +1,49 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Jan 10 17:21:40 2019",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Jan 10 21:07:28 2019",
     "version": "eosio::abi/1.0",
     "structs": [
         {
-            "name": "add",
+            "name": "activate",
+            "base": "",
+            "fields": [
+                {
+                    "name": "author",
+                    "type": "name"
+                },
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "item_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "addcad",
+            "base": "",
+            "fields": [
+                {
+                    "name": "author",
+                    "type": "name"
+                },
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "item_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "cadname",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "additem",
             "base": "",
             "fields": [
                 {
@@ -24,7 +64,11 @@
                 },
                 {
                     "name": "winumber",
-                    "type": "int32"
+                    "type": "uint32"
+                },
+                {
+                    "name": "maxnumber",
+                    "type": "uint32"
                 }
             ]
         },
@@ -83,8 +127,18 @@
     "types": [],
     "actions": [
         {
-            "name": "add",
-            "type": "add",
+            "name": "activate",
+            "type": "activate",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "addcad",
+            "type": "addcad",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "additem",
+            "type": "additem",
             "ricardian_contract": ""
         },
         {
