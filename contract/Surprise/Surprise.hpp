@@ -10,7 +10,6 @@ namespace Coup_de_Grace{
 
     class Surprise : public contract { // manage actions about Surprise
         using contract::contract;   //in order to use its constructor 
-        // using std::string;
 
         public:
             Surprise(account_name self):contract(self){}

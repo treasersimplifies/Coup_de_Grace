@@ -95,12 +95,6 @@ cleos push action pa checkbyid '["vanel","3"]' -p vanel@active
 cleos push action pa checkn '["vanel","2"]' -p vanel@active 
 # test Suprise::add action
 ## old//cleos push action pa additem '["vanel","1","1","XiaoMi Phone","5"]' -p vanel@active 
-cleos push action pa additem '["vanel","1","1","XiaoMi Phone","5","25"]' -p vanel@active # 5 out of 25
-cleos push action pa checkbyid '["vanel","1"]' -p vanel@active
-cleos push action pa addcad '["vanel","1","1","18258583270"]' -p vanel@active 
-cleos push action pa activate '["vanel","1","1"]' -p vanel@active 
-cleos push action pa checkn '["vanel","3"]' -p vanel@active
-
 cleos push action pa additem '["vanel","1","2","iPhone XS","2","25"]' -p vanel@active # 5 out of 25
 cleos push action pa addcad '["vanel","1","2","007"]' -p vanel@active
 cleos push action pa addcad '["vanel","1","2","stevejobs"]' -p vanel@active
@@ -112,3 +106,21 @@ cleos push action pa activate '["vanel","1","2"]' -p vanel@active
 cleos push action pa checkbyid '["vanel","1"]' -p vanel@active
 cleos push action pa checkn '["vanel","3"]' -p vanel@active
 
+cleos push action pa additem '["vanel","1","3","Tesla model S","1","25"]' -p vanel@active
+cleos push action pa addcad '["vanel","1","3","satoshi"]' -p vanel@active
+cleos push action pa addcad '["vanel","1","3","vitalik"]' -p vanel@active
+cleos push action pa addcad '["vanel","1","3","bytemaster"]' -p vanel@active
+cleos push action pa activate '["vanel","1","3"]' -p vanel@active
+cleos push action pa checkbyid '["vanel","1"]' -p vanel@active
+cleos push action pa checkn '["vanel","3"]' -p vanel@active
+
+# bugs unsolved:
+# 1. a specifiy item can be activate many times...
+#    fixed!!
+# 2. if winumber is bigger than number of candidates...
+#    fixed!
+cleos push action pa additem '["vanel","1","1","XiaoMi Phone","5","25"]' -p vanel@active # 5 out of 25
+cleos push action pa checkbyid '["vanel","1"]' -p vanel@active
+cleos push action pa addcad '["vanel","1","1","18258583270"]' -p vanel@active 
+cleos push action pa activate '["vanel","1","1"]' -p vanel@active 
+cleos push action pa checkn '["vanel","3"]' -p vanel@active

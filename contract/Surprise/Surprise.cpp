@@ -1,5 +1,6 @@
 #include "Surprise.hpp"
 
+const int MAX_CAD = 25;
 
 namespace Coup_de_Grace {
     
@@ -113,34 +114,39 @@ namespace Coup_de_Grace {
 
         auto theprj = surpriseprjs.get(project_id);
         auto theitem = theprj.items[item_id-1];
+        eosio_assert(theitem.winners.size()==0, "This item already activated!!! No Twicy!!!");
 
         uint32_t cadnumber = theitem.cadidates.size();
         uint32_t winumber = theitem.winumber;
         print(theitem.winumber," out of ",cadnumber," will win.They are ");
-        // surpriseprjs.modify(iterator, author, [&](auto& surpriseprj) {
-        //     surpriseprj.items.find(item_id).push_back(winner);
-        // });
 
-        int lucky[5]={0,0,0,0,0};
-        for(int i=0; i<cadnumber; ){
-           checksum256 result;
-            auto mixedBlock = tapos_block_prefix() * tapos_block_num();
-            const char *mixedChar = reinterpret_cast<const char *>(&mixedBlock);
-            sha256( (char *)mixedChar, sizeof(mixedChar), &result);
-            const char *p64 = reinterpret_cast<const char *>(&result);
-            auto r = (abs((int64_t)p64[i]) % (cadnumber + 1 - 1)) + 1;  //1 to cadnumber
-            int need_to_repeat=0;
-            for(int j=0;j<5;j++){
-                if(r==lucky[j]){
-                    need_to_repeat=1;
-                    break;
+        int lucky[MAX_CAD];//
+        if(winumber<=cadnumber){
+            for(int i=0; i<cadnumber; ){
+                checksum256 result;
+                auto mixedBlock = tapos_block_prefix() * tapos_block_num();
+                const char *mixedChar = reinterpret_cast<const char *>(&mixedBlock);
+                sha256( (char *)mixedChar, sizeof(mixedChar), &result);
+                const char *p64 = reinterpret_cast<const char *>(&result);
+                auto r = (abs((int64_t)p64[i]) % (cadnumber + 1 - 1)) + 1;  //1 to cadnumber
+                int need_to_repeat=0;
+                for(int j=0;j<5;j++){
+                    if(r==lucky[j]){
+                        need_to_repeat=1;
+                        break;
+                    }
                 }
+                if(need_to_repeat==0){
+                    print(" ", r);
+                    lucky[i++]=r;
+                }
+                if(i==winumber)break;
             }
-            if(need_to_repeat==0){
-                print(" ", r);
-                lucky[i++]=r;
+        }else{
+            for(int i=0;i<cadnumber;i++){
+                lucky[i]=i+1;
+                print(" ", i+1);
             }
-            if(i==winumber)break;
         }
         print(". ");
 
