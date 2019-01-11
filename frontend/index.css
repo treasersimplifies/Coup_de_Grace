@@ -1,0 +1,31 @@
+h1{
+    font-size:20px;
+    color:#930;
+    text-align:center;
+    letter-spacing:2px;
+    word-spacing:10px;
+}
+h2{
+    color:brown;
+}
+div{
+    margin:0 auto;
+    max-width:960px;
+    width:100%;
+}
+body{
+    /* color:rgb(16, 16, 129); */
+    background-color: rgb(255, 255, 255);
+}
+#panel_show{
+    height: 200px;
+}
+.number_text{
+    width: 25px;
+}
+button{
+    width: 70px;
+}
+#operate_output{
+    height: 600px;
+}

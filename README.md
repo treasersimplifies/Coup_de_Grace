@@ -1,4 +1,4 @@
-#实现功能：
+# 实现功能：
 1.开奖方式：手动开奖
 2.是否需要签名
 3.创建完以后输入二维码
@@ -10,6 +10,12 @@
 抽奖完成后接受到抽奖者的数据：
 抽奖项目{奖项，获得者1的手机，获得者i的手机}
 存到区块链。
+### 解决了随机数
+使用了基于区块数据的随机数产生算法：
+### 解决了Multi_index的table下的vector的元素中的vector的元素的压栈
+```surpriseprjs.modify(iterator, author, [&](auto& surpriseprj) {
+    surpriseprj.items[item_id-1].winners.push_back(winner);
+});```
 
 ## 客户端：
 
@@ -34,4 +40,3 @@
 单方抽奖待抽奖者池为数字，
 交互抽奖待抽奖者池为用户的手机号。
 }
-

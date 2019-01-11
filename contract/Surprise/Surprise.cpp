@@ -27,15 +27,15 @@ namespace Coup_de_Grace {
         eosio_assert(iterator != surpriseprjs.end(), "Project not found.");
 
         auto theprj = surpriseprjs.get(project_id);
-        print("|-| Id: ", theprj.id);
-        print(" | Name: ", theprj.name.c_str());
-        print(" | Items : ");
+        print("||| Id: ", theprj.id);
+        print(" ||- Name: ", theprj.name.c_str());
+        print(" ||- Items: ");
         if (theprj.items.size() > 0) {
             for (uint32_t i = 0; i < theprj.items.size(); i++) {
                 // ATN： theprj.items.at(0).id = 1 ！！！！
-                print("id:",theprj.items.at(i).id, " name:");
-                print(theprj.items.at(i).name.c_str(), " winumber:");
-                print(theprj.items.at(i).winumber, " winners:");
+                print("id:",theprj.items.at(i).id, "  context:");
+                print(theprj.items.at(i).name.c_str(), "  winners' number:");
+                print(theprj.items.at(i).winumber, "  |-winners:");
                 if (theprj.items.at(i).winners.size() > 0) {
                     for (uint32_t j = 0; j < theprj.items.at(i).winners.size(); j++) {
                         print(theprj.items.at(i).winners.at(j)," ");
@@ -45,8 +45,9 @@ namespace Coup_de_Grace {
                 }
             }
         } else {
-            print("Undefined ");
+            print(" Undefined ");
         }
+        print("\n");
     }
 
     [[eosio::action]]
@@ -56,14 +57,14 @@ namespace Coup_de_Grace {
             auto iterator = surpriseprjs.find(project_id);
             eosio_assert(iterator != surpriseprjs.end(), "Project not found.");
             auto theprj = surpriseprjs.get(project_id);
-            print("|-| Id: ", theprj.id);
-            print(" | Name: ", theprj.name.c_str());
+            print("||| Id: ", theprj.id);
+            print(" ||- Name: ", theprj.name.c_str());
+            print(" ||- Items: ");
             if (theprj.items.size() > 0) {
-                print(" |Items : ");
                 for (uint32_t i = 0; i < theprj.items.size(); i++) {
-                    print("id:",theprj.items.at(i).id, " name:");
-                    print(theprj.items.at(i).name.c_str(), " winumber:");
-                    print(theprj.items.at(i).winumber, " winnners:");
+                    print("id:",theprj.items.at(i).id, "  context:");
+                    print(theprj.items.at(i).name.c_str(), "  winners' number:");
+                    print(theprj.items.at(i).winumber, "  |-winners:");
                     if (theprj.items.at(i).winners.size() > 0) {
                         for (uint32_t j = 0; j < theprj.items.at(i).winners.size(); j++) {
                             print(theprj.items.at(i).winners.at(j)," ");
@@ -73,9 +74,10 @@ namespace Coup_de_Grace {
                     }
                 }
             } else {
-                print(" |Items : Undefined ");
+                print(" Undefined ");
             }
         }
+        print("\n");
     }
 
     [[eosio::action]]

@@ -3,7 +3,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>简易随机抽奖DApp</title>
     <link href="index.css" rel="stylesheet" type="text/css" />
-    <!-- <script src="index.js"></script> -->
+    <script src="index.js"></script>
     <!-- <script src="app.js"></script> -->
     <!-- <pre style="width: 100%; height: 100%; margin:0px; "></pre> -->
     <script src='eosjs/dist-web/eosjs-api.js'></script>
@@ -11,40 +11,63 @@
     <!-- <script src='eosjs/dist-web/eosjs-rpcerror-debug.js'></script> -->
     <script src='eosjs/dist-web/eosjs-jssig.js'></script>
     <script>
-        // import { Api, JsonRpc, RpcError } from 'eosjs';
-        // import JsSignatureProvider from 'eosjs/dist/eosjs-jssig';
         privateKey_pa   ="PW5KfKXy8qXD3JbKZ3RosqS6PYfm9eBjx2mHveVm4T4dfz7d4LrFE";
         // defaultPrivateKey="5KjiKSVyFEnR8rr2TmxMZBDSrvp45LVX9BSyseEFsVBtruaGGXg";
         vanelOwnerKey   ="5K9U98d63o1z9YXXgBE8uCVvF7co8Tdp6VoywKhv9bg4N3iokxQ";
         vanelActiveKey  ="5KjiKSVyFEnR8rr2TmxMZBDSrvp45LVX9BSyseEFsVBtruaGGXg";
-        // alert(privateKey);
-        // const rpc = new Rpc.JsonRpc('http://127.0.0.1:8888', { fetch });//wrong... m , { fetch }
-        // const signatureProvider = new SignatureProvider([privateKey]);//.
-        // const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() });
         const rpc = new eosjs_jsonrpc.default('http://127.0.0.1:8888');
         const signatureProvider = new eosjs_jssig.default([vanelActiveKey]);
         const api = new eosjs_api.default({ rpc, signatureProvider });
-        function show_info(){
-            document.getElementById("cdg_text").innerHTML = "into fun";
+        function pushAction(actionName, dataValue){
             (async () => {
                 try {
                     const result = await api.transact({
                         actions: [{
                             account: 'pa',
-                            name: "showinfo",
+                            name: actionName,
                             authorization: [{
-                                actor: 'vanel',//
+                                actor: 'vanel',
                                 permission: 'active',
                             }],
-                            data: {},
+                            data: dataValue,
                         }]
                         }, {
                         blocksBehind: 3,
                         expireSeconds: 30,
                     });
-                    var outres = '\n\nTransaction pushed!\n\n' + JSON.stringify(result, null, 2);
-                    console.log(outres);
-                    alert(outres);
+                    var console_output = result.processed.action_traces[0].console;
+                    var operate_output = console_output.replace(/Id/g,"<strong>主奖项编号</strong>");
+                    var operate_output = operate_output.replace(/Name/g,"<strong>奖项名称</strong>");
+                    var operate_output = operate_output.replace(/Items/g,"子奖项");
+                    var operate_output = operate_output.replace(/id:/g,"  编号：");
+                    var operate_output = operate_output.replace(/context:/g,"  内容：");
+                    var operate_output = operate_output.replace(/winners' number:/g,"  获奖人数：");
+                    var operate_output = operate_output.replace(/winners:/g,"  获奖者：");
+                    var surprise_prjs = console_output.split("|||");
+                    var surprise_prjs_operate = operate_output.split("|||");
+                    var pris_num = surprise_prjs.length;
+                    let blockchainText = "";
+                    let operateText = "";
+                    // document.getElementById("blockchain_output").innerHTML = console_output;
+                    for(var i=1; i<pris_num; i++){
+                        blockchainText += "<p>" + surprise_prjs[i] + "</p>";
+                        var surprise_items = surprise_prjs[i].split("||-");
+                        var surprise_items_operate = surprise_prjs_operate[i].split("||-");
+                        for(var j=0; j<surprise_items_operate.length; j++){
+                            if(j>1){
+                                operateText += "<p>" +"&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp";
+                                var iteminfo = surprise_items_operate[j].split("|-");
+                                operateText += iteminfo[0] +"</p>"+"<p>"+"&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+ iteminfo[1] +"</p>";
+                            }else{
+                                operateText += surprise_items_operate[j];
+                            }
+                        }
+                    }
+                    operateText = operateText.replace(/Undefined/g,"暂未设置");
+                    operateText = operateText.replace(/undefined/g,"");
+                    operateText = operateText.replace(/not generated yet/g,"未产生");
+                    document.getElementById("blockchain_output").innerHTML = blockchainText;
+                    document.getElementById("operate_output").innerHTML = operateText;
                 } catch (e) {
                     var err_info = '\nCaught exception: ' + e;
                     if (e instanceof eosjs_jsonrpc.RpcError)
@@ -54,249 +77,66 @@
                 }
             })();
         }
-        function checkn(){
-            (async () => {
-                try {
-                    const result = await api.transact({
-                        actions: [{
-                            account: 'pa',
-                            name: "checkn",
-                            authorization: [{
-                                actor: 'vanel',//
-                                permission: 'active',
-                            }],
-                            data: {
-                                author: 'vanel',
-                                number: '3',
-                            },
-                        }]
-                        }, {
-                        blocksBehind: 3,
-                        expireSeconds: 30,
-                    });
-                    var outres = '\n\nTransaction pushed!\n\n' + JSON.stringify(result, null, 2)
-                    console.log(outres);
-                    alert(outres);
-                } catch (e) {
-                    var err_info = '\nCaught exception: ' + e;
-                    if (e instanceof eosjs_jsonrpc.RpcError)
-                        err_info += '\n\n' + JSON.stringify(e.json, null, 2);
-                    alert(err_info);
-                    // throw(err);
-                }
-            })();
+        function showInfo(){
+            pushAction("showinfo",{});
         }
+        function checkN(){
+            var checkNumberValue = document.getElementById("check_number").value;
+            pushAction("checkn",{author:"vanel", number:checkNumberValue});
+        }
+        function checkById(){
+            var idValue = document.getElementById("check_id").value;
+            pushAction("checkbyid",{author:"vanel", project_id:idValue});
+        }
+
     </script>
 </head>
-<!-- http://www.runoob.com/js/js-htmldom.html -->
-<body onunload="bye()"> <!-- onload="checkCookie()" -->
+
+<body> <!-- onload="checkCookie()" -->
     <div>
         <h1 id="title" class="title">随机抽奖系统</h1>
-        <p id="cdg_text">
-            
-        </p>
-        <p>
-            <button type="button" onclick="show_info()">show_info</button>
-            <button type="button" onclick="checkn()">checkn</button>
-        </p>
-        <p id="p1">描述：考虑做一个随机抽奖系统<br>
-                JavaScript 能够改变页面中的所有 HTML 元素<br>
-                JavaScript 能够改变页面中的所有 HTML 属性<br>
-                JavaScript 能够改变页面中的所有 CSS 样式<br>
-                JavaScript 能够对页面中的所有事件做出反应
-        </p>
-        <hr /><hr />
-        <button type="button" onclick="displayDate()">显示日期</button>
-        <button type="button" onclick="displayChar()">还原</button>
-        <button type="button" onclick="alert('hhh')">弹窗</button>
-        <hr /><hr />
-        <p>点击💡试试？？</p>
-        <p>
-            <img id="myimage" onclick="changeImage()" src="src/pic_bulboff.gif" width="100" height="180">
-        </p>
-        <hr /><hr />
-        <p>
-            输入RGB试试？比如00ff00:
-            <input id="text1" type="text">
-            <button type="button" onclick="changeTitleStyle()">改变标题颜色</button>
-        </p>
-        <hr /><hr />
-        <p id="notes" onmouseover="turnblue()" onmouseout="turnblack()">请输入数字。如果不是数字会弹出提示框。
-        </p>
-            <button type="button" onclick="detect1()" onkeydown="downshow()">点击这里并按下键盘试试</button>
-            <hr /><hr />
-        <p>
-            <form name="myForm" onsubmit="return validateForm()" method="post">
-                名字(form): 
-                <input type="text" name="fname">
-                <input type="submit" value="提交">
-            </form>
-        </p>
-        <hr /><hr />
-        <p> 如果输入的数字小于100 或大于300，会提示错误信息。
-            <input id="id1" type="number" min="100" max="300" required>
-            <button onclick="validateNumber()">验证</button>
-            <p id="de"></p>
-        </p>
-        <hr /><hr />
-        <p>
-            <form name="form_json" onsubmit="return validateForm()" method="post">
-                JSON: 
-                <input type="text" name="text_json">
-                <button type="button" onclick="jsonParse()">PRESS ME</button>
-            </form>
-            <p id="p_json"></p>
-        </p>
-        <hr /><hr />
-        <p>
-            <input type="text" id="text_getbyid">
-            <button type="button" onclick="getbyid()">getElementById</button>
-            <p id="p_getbyid"></p>
-            <input type="text" id="text_getbytagname">
-            <button type="button" onclick="getbytagname()">getElementsByTagName</button>
-            <p id="p_getbytagname"></p>
-            <input type="text" id="text_getbyclassname">
-            <button type="button" onclick="getbyclassname()">getElementsByClassName</button>
-            <p id="p_getbyclassname"></p>
-        </p>
-        <hr /><hr />
-        改变 HTML 属性( 点击图片试试？)
-        <p>
-            <img id="imageLeon" src="src/19001.jpg" width="400px" height="240px" onclick="changePic1900()">
-        </p>
-        <hr /><hr />
-        改变 CSS 样式（ 点击文字试试？）
-        <p id="changecss" onclick="turnred()">
-            2019年1月5日，终于写完开题报告了....
-        </p>
-        <hr /><hr />
-        <p>
-            <button type="button" id="myBtn">甚至能在HTML代码中插入一段改变本按钮onclick属性的东西，那问题来了，可以改变id属性吗？</button>
-        </p>
-        <script>
-            document.getElementById("myBtn").onclick=function(){document.getElementById("myBtn").innerHTML="onclick added,但是这段代码得放在按钮HTML的后面哦"};
-        </script>
-        <hr /><hr />
-        <p>
-            输入你的名字: <input type="text" id="fname" onchange="toUpper()">
-            <p>当你离开输入框后，函数将被触发，将小写字母转为大写字母。</p>
-        </p>
-        <hr /><hr />
-        <p>
-            <div onmouseover="mOver(this)" onmouseout="mOut(this)" onmousedown="mDown(this)" onmouseup="mUp(this)" style="background-color:rgb(98, 72, 139);width:150px;height:20px;padding:40px;">
-                Mouse Over Me pls
-            </div>
-        </p>
-        <hr /><hr />
-        <p id="p">
-            添加事件的第三种方法：addEventListener。（你可以向任何 DOM 对象添加事件监听，不仅仅是 HTML 元素。如： window 对象。）
-        </p>
-        <p>
-            <input type="text" id="event">click
-            <input type="text" id="actionfunction">function(){document.getElementById('p').style.color='#00ff00'}
-            <p>
-                <button type="button" onclick="addEL()">addEventListener</button>
-                <button type="button" onclick="removeEL()">removeEventListener</button>
-                <button type="button" onclick="addWA()">addWindowAction</button>
+        <div id="panel_show">
+            <p id="label1">
+                <strong>Console output from EOS BlockChain:</strong><hr />
             </p>
-        </p>
-        <hr /><hr />
-        <p id="addEle">
-            <button type="button" onclick="appChd()" id="b1">appendChild</button>
-            <button type="button" onclick="insBef()">insertBefore</button>
-            <button type="button" onclick="rpcChd()" id="b2">replaceChild</button>
-        </p>
-        <hr /><hr />
+            <code id="blockchain_output"></code>
+        </div>
+        <hr />
         <p>
-            在本网页中一共有<strong id="n"></strong>个p标签，他们是:<em id="m">~</em>
-            
+            <button type="button" onclick="showInfo()">showinfo</button>
         </p>
-        <script>
-            var allP = document.getElementsByTagName("p");
-            document.getElementById("n").innerHTML=allP.length;
-            document.getElementById("m").innerHTML=allP;
-        </script>
-        <hr /><hr />
-        BOM
-        <p id="deep">
-            <p class="one">
-                <p>
-                    deeptext
-                </p>
-            </p>
-            <p>
-                superficialtext
-            </p>
-            <button type="button" onclick=window.close() >Close this page</button>
-            <button type="button" onclick=window.open("outdex.html") >Open new page</button>
-        </p>
-        <script>
-            document.getElementById("deep").innerHTML="Window: "+window.innerHeight+", "+window.innerWidth;
-        </script>
-        <hr /><hr />
         <p>
-            <p id="screeinfo"></p>
+            输入你要查询的历史记录数目：
+            <input type="text" id="check_number" class="number_text">
+            <button type="button" onclick="checkN()">checkn</button>
         </p>
-        <script>
-            document.getElementById("screeinfo").innerHTML="Screen: "+screen.availHeight+", "+screen.availWidth;
-        </script>
-        <hr /><hr />
         <p>
-            <p id="locationinfo"></p>
-            <button type="button" onclick="refresh()" >Refresh this page</button>
+            输入你要查询的记录的主奖项ID：
+            <input type="text" id="check_id" class="number_text">
+            <button type="button" onclick="checkById()">checkbyid</button>
         </p>
-        <script>
-            document.getElementById("locationinfo").innerHTML="Location: hostname:"+location.hostname+",&nbsp pathname:"+location.pathname+",&nbsp port:"+location.port+",&nbsp protocal:"+location.protocol;
-        </script>
-        <button type="button" onclick="back()" >《《《</button>
-        <button type="button" onclick="forward()" >》》》</button>
-        <hr /><hr />
-        Navigator Infomation
         <p>
-            <strong>浏览器检测</strong>：
-            由于 navigator 可误导浏览器检测，使用对象检测可用来嗅探不同的浏览器。
-            由于不同的浏览器支持不同的对象，您可以使用对象来检测浏览器。例如，由于只有 Opera 支持属性 "window.opera"，您可以据此识别出 Opera。
-            例子：if (window.opera) {...some action...}
-            <p id="navigatorinfo"></p>
+            输入你要<strong>新建</strong>的<strong>抽奖项目</strong>名称：
+            <input type="text" id="create_id" class="number_text">
+            <button type="button" onclick="createPrj()">create</button>
         </p>
-        <script>
-            txt = "<p>浏览器代号: " + navigator.appCodeName + "</p>";
-            txt+= "<p>浏览器名称: " + navigator.appName + "</p>";
-            txt+= "<p>浏览器版本: " + navigator.appVersion + "</p>";
-            txt+= "<p>启用Cookies: " + navigator.cookieEnabled + "</p>";
-            txt+= "<p>硬件平台: " + navigator.platform + "</p>";
-            txt+= "<p>用户代理: " + navigator.userAgent + "</p>";
-            txt+= "<p>用户代理语言: " + navigator.systemLanguage + "</p>";
-            document.getElementById("navigatorinfo").innerHTML=txt;
-        </script>
-        <hr /><hr />
+        要添加到主奖项ID：<input type="text" id="item_prj_id" class="number_text">
+        子奖项ID：<input type="text" id="item_id" class="number_text">
+        子奖项内容：<input type="text" id="item_context">
+        <button type="button" onclick="addItem()">additem</button>
         <p>
-            确认框
-            <button type="button" onclick="conFirm()" >confirm</button>
-            <p id="cf"></p>
-            提示框
-            <button type="button" onclick="proMpt()" >prompt</button>
-            <p id="pm"></p>
+            输入要添加到主奖项ID：<input type="text" id="cad_prj_id" class="number_text">
+            子奖项ID：<input type="text" id="cad_item_id" class="number_text">
+            参与者（名称或联系方式皆可）：
+            <input type="text" id="cad_id">
+            <button type="button" onclick="addCad()">addcad</button>
         </p>
-        <hr /><hr />
-        Cookies
-        <p>
-            <p id="cook"></p>
-            <button type="button" onclick="clearcookie()" >Clear Cookie</button>
-        </p>
-        <script>
-            var c = document.cookie.split(";");
-            document.getElementById("cook").innerHTML = c;
-        </script>
-        <hr /><hr />
-        <p>
+        <hr />
+        操作记录显示：
+        <div id="operate_output">
 
-        </p>
-        <hr /><hr />
-        <p>
+        </div>
 
-        </p>
-        <hr /><hr />
         <p><a href="https://github.com/treasersimplifies" target="_blank">The End</a></p>
         <p></p>
         <p></p>
