@@ -16,7 +16,16 @@ namespace Coup_de_Grace{
 
             [[eosio::action]]
             void showinfo(){
-                print("Surprise info....");
+                print("Surprise!!!! It is a random draw/lottery dapp based on eos blockchain.");
+                surpriseprjIndex surpriseprjs(_self, _self);
+                int project_id = 1;
+                for(project_id = 1; ; project_id++){
+                    auto iterator = surpriseprjs.find(project_id);
+                    if(iterator == surpriseprjs.end()){
+                        break;
+                    }
+                }
+                print("Numbers of Projects:",project_id-1);
             }
             struct surpriseitem{
                 uint64_t id;

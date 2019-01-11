@@ -18,14 +18,29 @@ body{
     background-color: rgb(255, 255, 255);
 }
 #panel_show{
-    height: 200px;
+    /* height: 150px; */
+    min-height: 150px;
+    color:rgb(90, 78, 107);/*un*/
+}
+#transaction_hash{
+    min-height: 30px;
+    border:2px rgb(54, 187, 248) solid;
 }
 .number_text{
     width: 25px;
 }
+.import_zone{
+    border-top:2px rgb(92, 88, 94) solid;
+}
 button{
-    width: 70px;
+    width: 75px;
 }
 #operate_output{
     height: 600px;
+}
+#prj{
+    border:2px rgb(9, 105, 230);
+}
+.import_text{
+    color: rgb(31, 81, 175);
 }

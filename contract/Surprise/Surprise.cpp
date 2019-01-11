@@ -16,7 +16,7 @@ namespace Coup_de_Grace {
             surpriseprj.id = project_id;
             surpriseprj.name = project_name;
         });
-        print(" You have successfully create for an surpriseprjs in Coup_de_Grace!");
+        print("Successfully create a surpriseprjs named <strong>",project_name,"</strong> in Coup_de_Grace!");
     }
 
     [[eosio::action]]
@@ -33,9 +33,10 @@ namespace Coup_de_Grace {
         if (theprj.items.size() > 0) {
             for (uint32_t i = 0; i < theprj.items.size(); i++) {
                 // ATN： theprj.items.at(0).id = 1 ！！！！
-                print("id:",theprj.items.at(i).id, "  context:");
+                print("||id:",theprj.items.at(i).id, "  context:");
                 print(theprj.items.at(i).name.c_str(), "  winners' number:");
-                print(theprj.items.at(i).winumber, "  |-winners:");
+                print(theprj.items.at(i).winumber,"  cadidates' number:");
+                print(theprj.items.at(i).cadidates.size(), "  |-winners:");
                 if (theprj.items.at(i).winners.size() > 0) {
                     for (uint32_t j = 0; j < theprj.items.at(i).winners.size(); j++) {
                         print(theprj.items.at(i).winners.at(j)," ");
@@ -62,9 +63,10 @@ namespace Coup_de_Grace {
             print(" ||- Items: ");
             if (theprj.items.size() > 0) {
                 for (uint32_t i = 0; i < theprj.items.size(); i++) {
-                    print("id:",theprj.items.at(i).id, "  context:");
+                    print("||id:",theprj.items.at(i).id, "  context:");
                     print(theprj.items.at(i).name.c_str(), "  winners' number:");
-                    print(theprj.items.at(i).winumber, "  |-winners:");
+                    print(theprj.items.at(i).winumber,"  cadidates' number:");
+                    print(theprj.items.at(i).cadidates.size(), "  |-winners:");
                     if (theprj.items.at(i).winners.size() > 0) {
                         for (uint32_t j = 0; j < theprj.items.at(i).winners.size(); j++) {
                             print(theprj.items.at(i).winners.at(j)," ");
@@ -94,7 +96,7 @@ namespace Coup_de_Grace {
                 maxnumber
             });
         });
-
+        print("Successfully add an item named <strong>",item_name,"</strong>!");
     }
 
     [[eosio::action]]
@@ -106,6 +108,7 @@ namespace Coup_de_Grace {
         surpriseprjs.modify(iterator, author, [&](auto& surpriseprj) {
             surpriseprj.items[item_id-1].cadidates.push_back(cadname);
         });
+        print("Successfully add a cadidate named <strong>",cadname,"</strong>!");
     }
     
     [[eosio::action]]
