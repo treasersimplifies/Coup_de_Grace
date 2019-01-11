@@ -93,15 +93,16 @@ cleos push action pa checkbyid '["vanel","2"]' -p vanel@active
 cleos push action pa checkbyid '["vanel","3"]' -p vanel@active
 # test Suprise::checkn action
 cleos push action pa checkn '["vanel","2"]' -p vanel@active 
-# test Suprise::add action
-## old//cleos push action pa additem '["vanel","1","1","XiaoMi Phone","5"]' -p vanel@active 
-cleos push action pa additem '["vanel","1","2","iPhone XS","2","25"]' -p vanel@active # 5 out of 25
+# test Suprise::additem action( a lottery project may have many items for different level of prize )
+cleos push action pa additem '["vanel","1","2","iPhone XS","2","25"]' -p vanel@active # 2 out of max 25 wins the prizes
+# test Suprise::addcad action
 cleos push action pa addcad '["vanel","1","2","007"]' -p vanel@active
 cleos push action pa addcad '["vanel","1","2","stevejobs"]' -p vanel@active
 cleos push action pa addcad '["vanel","1","2","jackma"]' -p vanel@active
 cleos push action pa addcad '["vanel","1","2","billgates"]' -p vanel@active
 cleos push action pa addcad '["vanel","1","2","wuuzhaohui"]' -p vanel@active
 cleos push action pa addcad '["vanel","1","2","jaychou"]' -p vanel@active
+# test Suprise::activate action
 cleos push action pa activate '["vanel","1","2"]' -p vanel@active
 cleos push action pa checkbyid '["vanel","1"]' -p vanel@active
 cleos push action pa checkn '["vanel","3"]' -p vanel@active
@@ -113,6 +114,11 @@ cleos push action pa addcad '["vanel","1","3","bytemaster"]' -p vanel@active
 cleos push action pa activate '["vanel","1","3"]' -p vanel@active
 cleos push action pa checkbyid '["vanel","1"]' -p vanel@active
 cleos push action pa checkn '["vanel","3"]' -p vanel@active
+
+
+# Above finish all basic and pass test
+# Below will be some normal small updates
+
 
 # bugs unsolved:
 # 1. a specifiy item can be activate many times...
