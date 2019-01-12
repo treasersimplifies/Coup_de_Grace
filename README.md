@@ -1,4 +1,24 @@
-# 实现功能：
+# 要求
+搭建私有链，设想某个去中心化应用场景，编写智能合约，完成智能合约的编译、部署和调用。基于任意架构的区块链平台开发一款可运行的DApp。
+### 提交内容
+1. 完整源代码
+2. word说明文档（包括：）
+	* 开发环境搭建
+	* 功能设计
+	* 合约设计
+	* 系统实现和部署
+	* 主要界面截图与说明
+	
+# 功能概述(Introduction)
+1. 能实现创建抽奖主奖项，并在主奖项下添加子奖项。比如创建“协会活动抽奖”这个主奖项，并在下面添加“一等奖”、“二等奖”等子奖项。创建后显示创建奖项的交易哈希值。
+2. 能单方面添加奖项参与者，具体到子奖项。比如添加10位参与抽“二等奖”。
+3. 能单方面对某一子奖项开奖。并将抽奖结果自动上链。
+4. 能查询历史记录。可以按主奖项ID为索引值进行查询，也可以查询历史中前n个记录。
+
+# 智能合约()
+
+![OverView](frontend/src/OverView.jpg)
+
 1.开奖方式：手动开奖
 2.是否需要签名
 3.创建完以后输入二维码
@@ -13,9 +33,11 @@
 ### 解决了随机数
 使用了基于区块数据的随机数产生算法：
 ### 解决了Multi_index的table下的vector的元素中的vector的元素的压栈
-```surpriseprjs.modify(iterator, author, [&](auto& surpriseprj) {
-    surpriseprj.items[item_id-1].winners.push_back(winner);
-});```
+```
+surpriseprjs.modify(iterator, author, [&](auto& surpriseprj) { 
+	surpriseprj.items[item_id-1].winners.push_back(winner);
+});
+```
 
 ## 客户端：
 
