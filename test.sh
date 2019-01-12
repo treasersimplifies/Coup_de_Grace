@@ -86,8 +86,8 @@ cleos push action pa showinfo '[]' -p vanel@active --json
 
 # test Suprise::create action
 cleos push action pa create '["vanel","1","testlottery"]' -p vanel@active
-cleos push action pa create '["vanel","2","yearconf"]' -p vanel@active
-cleos push action pa create '["vanel","3","yearconf2"]' -p vanel@active
+cleos push action pa create '["vanel","2","annualconf"]' -p vanel@active
+cleos push action pa create '["vanel","3","annualconf2"]' -p vanel@active
 # test Suprise::checkbyid action
 cleos push action pa checkbyid '["vanel","1"]' -p vanel@active
 cleos push action pa checkbyid '["vanel","2"]' -p vanel@active

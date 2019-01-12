@@ -1,3 +1,4 @@
+
 // scripts which are the same in index.html
 var info="";
         privateKey_pa   ="PW5KfKXy8qXD3JbKZ3RosqS6PYfm9eBjx2mHveVm4T4dfz7d4LrFE";

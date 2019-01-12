@@ -1,3 +1,8 @@
+# Coup_de_Grace
+The distinguished ability of PA(Phantom Assassin)
+
+Phantom Assassin refines her combat abilities, gaining a chance of delivering a devastating critical strike to enemy units. Stifling Dagger shares the same critical strike chance.
+
 # 要求
 搭建私有链，设想某个去中心化应用场景，编写智能合约，完成智能合约的编译、部署和调用。基于任意架构的区块链平台开发一款可运行的DApp。
 ### 提交内容
@@ -94,7 +99,7 @@ EOS无法使用```#include<random>```，所以需要寻找其他的随机源。
 
 参考了：[generEOS/eosio.random](https://github.com/generEOS/eosio.random)和[Randomization in Contracts](https://developers.eos.io/eosio-cpp/docs/random-number-generation)
 
-原理是：通过区块数据来作为种子，产生哈希，比较不同的哈希得出比较结果，把比较结果作为随机数。因为哈希函数的输出无法预知，所以视为随机的来源。
+原理是：通过区块数据来作为种子，产生哈希，比较不同的哈希，得出比较结果，把比较结果作为随机数。
 
 ```
 int lucky[MAX_CAD];//
@@ -162,7 +167,7 @@ surpriseprjs.modify(iterator, author, [&](auto& surpriseprj) {
 
 **注意：查询前最好按下“显示信息”按钮来看看链上有多少个抽奖记录，不能越界。**
 ## 4.2 主要代码
-EOS提供了eosjs和eosjs2两个JavaScript库，能用来对交易进行签名和发生交易等操作。这里我使用的是eosjs。前端中的核心代码是利用EOS提供的JavaScript API和区块链节点建立通信（包括签名）和向智能合约推送action的部分。
+EOS提供了eosjs和eosjs2两个JavaScript库，能用来对交易进行签名和发送交易等操作。这里我使用的是eosjs。前端中的核心代码是利用EOS提供的JavaScript API和区块链节点建立通信（包括签名）和向智能合约推送action的部分。
 
 ### 建立通信
 
@@ -466,8 +471,8 @@ cleos push action pa showinfo '[]' -p vanel@active --json
 
 # test Suprise::create action
 cleos push action pa create '["vanel","1","testlottery"]' -p vanel@active
-cleos push action pa create '["vanel","2","yearconf"]' -p vanel@active
-cleos push action pa create '["vanel","3","yearconf2"]' -p vanel@active
+cleos push action pa create '["vanel","2","annualconf"]' -p vanel@active
+cleos push action pa create '["vanel","3","annualconf2"]' -p vanel@active
 
 # test Suprise::checkbyid action
 cleos push action pa checkbyid '["vanel","1"]' -p vanel@active
@@ -504,8 +509,7 @@ cleos push action pa checkn '["vanel","3"]' -p vanel@active
 
 ## Web端测试
 
-
-
+略。
 
 
 # Futurn Plan

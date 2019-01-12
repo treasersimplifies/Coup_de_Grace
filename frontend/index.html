@@ -86,10 +86,12 @@
                         operateText = operateText.replace(/not generated yet/g,"未产生");
                         document.getElementById("blockchain_output").innerHTML = blockchainText;
                         document.getElementById("operate_output").innerHTML = operateText;
+                        document.getElementById("transaction_hash").innerHTML="";
                     }else if(actionName=="showinfo"){
                         var prj_totalnum = console_output.indexOf(":");
                         document.getElementById("limit").innerHTML = "(目前链上所存主奖项共有：" + console_output[prj_totalnum+1]+")";
                         document.getElementById("blockchain_output").innerHTML = console_output;
+                        document.getElementById("transaction_hash").innerHTML="";
                     }
                     else{
                         document.getElementById("transaction_hash").innerHTML="结果已上链！本次交易哈希为 "+transaction_id+", 请点击查看结果以示结果！";
