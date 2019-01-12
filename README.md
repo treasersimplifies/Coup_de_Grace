@@ -9,13 +9,13 @@
 	* 系统实现和部署
 	* 主要界面截图与说明
 	
-# 功能概述(Introduction)
+# 2 功能概述(Introduction)
 1. 能实现创建抽奖主奖项，并在主奖项下添加子奖项。比如创建“协会活动抽奖”这个主奖项，并在下面添加“一等奖”、“二等奖”等子奖项。创建后显示创建奖项的交易哈希值。
 2. 能单方面添加奖项参与者，具体到子奖项。比如添加10位参与抽“二等奖”。
 3. 能单方面对某一子奖项开奖。并将抽奖结果自动上链。
 4. 能查询历史记录。可以按主奖项ID为索引值进行查询，也可以查询历史中前n个记录。
 
-# 智能合约(Contract Part Design)
+# 3 智能合约(Contract Part Design)
 EOS的智能使用C++开发（也可以使用其他语言），限于时间所限，第一版抽奖软件比较简单，只需要一个[Surprise](https://github.com/treasersimplifies/Coup_de_Grace/tree/master/contract/Surprise)合约就能实现既定功能。
 
 在这个合约里定义/实现了如下内容：
@@ -135,10 +135,10 @@ surpriseprjs.modify(iterator, author, [&](auto& surpriseprj) {
 });
 ``` 
 
-# 前端(Frontend Part Design)
+# 4 前端(Frontend Part Design)
 前端界面如下：
 ![OverView](frontend/src/OverView2.png)
-因为前端比较简单，所有直接写在一个html文件中了,需要引入如下文件，都位于eosjs库中（eosjs库的引入见下“ ”）：
+因为前端比较简单，没有用什么框架或者前端库，所有内容直接写在一个html文件中了,需要引入如下文件，都位于eosjs库中（eosjs库的引入见下“5 系统实现和部署”）：
 
 
 ```
@@ -146,7 +146,7 @@ surpriseprjs.modify(iterator, author, [&](auto& surpriseprj) {
 <script src='eosjs/dist-web/eosjs-jsonrpc.js'></script>
 <script src='eosjs/dist-web/eosjs-jssig.js'></script>
 ```
-
+## 4.1界面
 前端的界面：分三部分，**顶部显示区域**、**中间按钮区域**、**底部查询显示区域**。
 
 ### 顶部显示区域
@@ -157,15 +157,60 @@ surpriseprjs.modify(iterator, author, [&](auto& surpriseprj) {
 ### 中间按钮区域
 每个按钮都一一、严格地对应一个合约中的action，而按钮旁边的输入框都是用来逐个输入逐个action需要的参数的。原理很简单。
 
-
-
 ### 底部查询显示区域
 进行查操作（按下查询按钮）后显示记录的区域。
 
 **注意：查询前最好按下“显示信息”按钮来看看链上有多少个抽奖记录，不能越界。**
+## 4.2 主要代码
+EOS提供了eosjs和eosjs2两个JavaScript库，能用来对交易进行签名和发生交易等操作。这里我使用的是eosjs。前端中的核心代码是利用EOS提供的JavaScript API和区块链节点建立通信（包括签名）和向智能合约推送action的部分。
 
+### 建立通信
 
-# 系统实现和部署
+```
+vanelActiveKey  ="5KjiKSVyFEnR8rr2TmxMZBDSrvp45LVX9BSyseEFsVBtruaGGXg";
+const rpc = new eosjs_jsonrpc.default('http://127.0.0.1:8888');
+const signatureProvider = new eosjs_jssig.default([vanelActiveKey]);
+const api = new eosjs_api.default({ rpc, signatureProvider });
+```
+这种写法非常简单，不合适在实际生产开发中使用，因为不安全。
+
+### 推送action
+
+```
+function pushAction(actionName, dataValue){
+    (async () => {
+        try {
+            const result = await api.transact({
+                actions: [{
+                    account: 'pa', //部署合约的账号
+                    name: actionName,
+                    authorization: [{
+                        actor: 'vanel', //本客户端拥有私钥进行签名的账号
+                        permission: 'active',
+                    }],
+                    data: dataValue,
+                }]
+                }, {
+                blocksBehind: 3,
+                expireSeconds: 30,
+            });
+            // alert(JSON.stringify(result, null, 2));
+            // 返回的result是一个JSON对象
+            var transaction_id = result.transaction_id;
+            var console_output = result.processed.action_traces[0].console;    
+            ...... //略去对从合约收到的文本进行进一步处理的内容。                
+        } catch (e) {
+            var err_info = '\nCaught exception: ' + e;
+            if (e instanceof eosjs_jsonrpc.RpcError)
+                err_info += '\n' + JSON.stringify(e.json, null, 2);
+            alert(err_info);
+        }
+    })();
+}
+```
+实现这个推送action的函数后，之后的各种action推送都只要调用它就行，不需要自己重新针对每个action写一个函数。
+
+# 5 系统实现和部署
 ## 系统集成
 编写完合约和前端后进行集成，项目结构：
 
@@ -275,6 +320,7 @@ cleos get account pa -j
 做好这些准备工作后就可以来部署合约到EOS区块链上了。
 
 ```
+# in test.sh:
 # 7. Compile the Surprise contract (make sure you are currently in the project path, or you need to use absolute path)
 cd /Coup_de_Grace/contract/Surprise
 eosio-cpp -o Surprise.wasm Surprise.cpp --abigen
@@ -345,92 +391,134 @@ cleos是与区块链进行交互的主要命令，它包含很多子命令（仅
 	
 4. cleos set: 部署命令，本项目只用到了部署合约（contract）。
 
-```
-Usage: cleos set [OPTIONS] SUBCOMMAND
-
-Options:
-  -h,--help                   Print this help message and exit
-
-Subcommands:
-  code                        Create or update the code on an account
-  abi                         Create or update the abi on an account
-  contract                    Create or update the contract on an account
-  account                     set or update blockchain account state
-  action                      set or update blockchain action state
-```
+	```
+	Usage: cleos set [OPTIONS] SUBCOMMAND
+	
+	Options:
+	  -h,--help                   Print this help message and exit
+	
+	Subcommands:
+	  code                        Create or update the code on an account
+	  abi                         Create or update the abi on an account
+	  contract                    Create or update the contract on an account
+	  account                     set or update blockchain account state
+	  action                      set or update blockchain action state
+	```
 
 5. cleos push: push命令，本项目只用到了push action。
 
+	```
+	Usage: cleos push SUBCOMMAND
+	Subcommands:
+	  action                      Push a transaction with a single action
+	  transaction                 Push an arbitrary JSON transaction
+	  transactions                Push an array of arbitrary JSON transactions
+	```
+
+6. cleos的全部命令：
+	
+	```
+	Usage: cleos [OPTIONS] SUBCOMMAND
+	
+	Options:
+	  -h,--help                   Print this help message and exit
+	  -u,--url TEXT=http://127.0.0.1:8888/
+	                              the http/https URL where nodeos is running
+	  --wallet-url TEXT=unix:///Users/treasersmac/eosio-wallet/keosd.sock
+	                              the http/https URL where keosd is running
+	  -r,--header                 pass specific HTTP header; repeat this option to pass multiple headers
+	  -n,--no-verify              don't verify peer certificate when using HTTPS
+	  --no-auto-keosd             don't automatically launch a keosd if one is not currently running
+	  -v,--verbose                output verbose actions on error
+	  --print-request             print HTTP request to STDERR
+	  --print-response            print HTTP response to STDERR
+	
+	Subcommands:
+	  version                     Retrieve version information
+	  create                      Create various items, on and off the blockchain
+	  convert                     Pack and unpack transactions
+	  get                         Retrieve various items and information from the blockchain
+	  set                         Set or update blockchain state
+	  transfer                    Transfer EOS from account to account
+	  net                         Interact with local p2p network connections
+	  wallet                      Interact with local wallet
+	  sign                        Sign a transaction
+	  push                        Push arbitrary transactions to the blockchain
+	  multisig                    Multisig contract commands
+	  wrap                        Wrap contract commands
+	  system                      Send eosio.system contract action to the blockchain.
+	```
+
+# 6 测试与使用说明
+
+可以通过两种方式（两种类型的客户端）来测试智能合约：通过命令行（Cli）和通过Web端（JavaScript API）。
+## 6.1 CLi 
+这里我将用到的测试内容都写到test.sh中了。测试的内容比较简单。
+
 ```
-Usage: cleos push SUBCOMMAND
-Subcommands:
-  action                      Push a transaction with a single action
-  transaction                 Push an arbitrary JSON transaction
-  transactions                Push an array of arbitrary JSON transactions
+# in test.sh:
+# 9. Test the Suprise contract
+
+# test Suprise::showinfo action
+cleos push action pa showinfo '[]' -p vanel@active 
+# or:
+cleos push action pa showinfo '[]' -p vanel@active --json
+
+# test Suprise::create action
+cleos push action pa create '["vanel","1","testlottery"]' -p vanel@active
+cleos push action pa create '["vanel","2","yearconf"]' -p vanel@active
+cleos push action pa create '["vanel","3","yearconf2"]' -p vanel@active
+
+# test Suprise::checkbyid action
+cleos push action pa checkbyid '["vanel","1"]' -p vanel@active
+cleos push action pa checkbyid '["vanel","2"]' -p vanel@active
+cleos push action pa checkbyid '["vanel","3"]' -p vanel@active
+
+# test Suprise::checkn action
+cleos push action pa checkn '["vanel","2"]' -p vanel@active 
+
+# test Suprise::additem action( a lottery project may have many items for different level of prize )
+cleos push action pa additem '["vanel","1","1","iPhone XS","2","25"]' -p vanel@active # 2 out of max 25 wins the prizes
+
+# test Suprise::addcad action
+cleos push action pa addcad '["vanel","1","1","007"]' -p vanel@active
+cleos push action pa addcad '["vanel","1","1","stevejobs"]' -p vanel@active
+cleos push action pa addcad '["vanel","1","1","jackma"]' -p vanel@active
+cleos push action pa addcad '["vanel","1","1","billgates"]' -p vanel@active
+cleos push action pa addcad '["vanel","1","1","wuuzhaohui"]' -p vanel@active
+cleos push action pa addcad '["vanel","1","1","jaychou"]' -p vanel@active
+# test Suprise::activate action
+cleos push action pa activate '["vanel","1","1"]' -p vanel@active
+cleos push action pa checkbyid '["vanel","1"]' -p vanel@active
+cleos push action pa checkn '["vanel","3"]' -p vanel@active
+
+# integrated test:
+cleos push action pa additem '["vanel","1","3","Tesla model S","1","25"]' -p vanel@active
+cleos push action pa addcad '["vanel","1","3","satoshi"]' -p vanel@active
+cleos push action pa addcad '["vanel","1","3","vitalik"]' -p vanel@active
+cleos push action pa addcad '["vanel","1","3","bytemaster"]' -p vanel@active
+cleos push action pa activate '["vanel","1","3"]' -p vanel@active
+cleos push action pa checkbyid '["vanel","1"]' -p vanel@active
+cleos push action pa checkn '["vanel","3"]' -p vanel@active
 ```
 
-6. 全部命令：
-
-```
-Usage: cleos [OPTIONS] SUBCOMMAND
-
-Options:
-  -h,--help                   Print this help message and exit
-  -u,--url TEXT=http://127.0.0.1:8888/
-                              the http/https URL where nodeos is running
-  --wallet-url TEXT=unix:///Users/treasersmac/eosio-wallet/keosd.sock
-                              the http/https URL where keosd is running
-  -r,--header                 pass specific HTTP header; repeat this option to pass multiple headers
-  -n,--no-verify              don't verify peer certificate when using HTTPS
-  --no-auto-keosd             don't automatically launch a keosd if one is not currently running
-  -v,--verbose                output verbose actions on error
-  --print-request             print HTTP request to STDERR
-  --print-response            print HTTP response to STDERR
-
-Subcommands:
-  version                     Retrieve version information
-  create                      Create various items, on and off the blockchain
-  convert                     Pack and unpack transactions
-  get                         Retrieve various items and information from the blockchain
-  set                         Set or update blockchain state
-  transfer                    Transfer EOS from account to account
-  net                         Interact with local p2p network connections
-  wallet                      Interact with local wallet
-  sign                        Sign a transaction
-  push                        Push arbitrary transactions to the blockchain
-  multisig                    Multisig contract commands
-  wrap                        Wrap contract commands
-  system                      Send eosio.system contract action to the blockchain.
-```
+## Web端测试
 
 
- 
+
+
 
 # Futurn Plan
-1.开奖方式：手动开奖
-2.是否需要签名
-3.创建完以后输入二维码
-4.项目状态：待开奖、以结束
-5.抽奖名单审核
+未来计划添加或改进的内容：
 
-加入抽奖、创建抽奖、查看抽奖历史三大功能
-
-加入抽奖 {
-你要参与的抽奖项目名：
-你的联系方式手机：
-你的姓名：
-你的验证信息（学号）：
-}
-创建抽奖{
-分类：单方抽奖、交互抽奖
-你要创建的抽奖项目名：
-奖项数目：i
-奖项1{名称；人数}
-...
-奖项i{名称；人数}
-从待抽奖者池中随机选择进行抽奖。
-显示抽奖结果。
-抽完后选择上传到区块链或者放弃重抽。
-单方抽奖待抽奖者池为数字，
-交互抽奖待抽奖者池为用户的手机号。
-}
+1. 对于密钥的操作应以更加安全的方式进行。
+2. 客户端要新增“加入别人新建的抽奖项目按钮“。
+3. 奖项创建完以后产生一串短数字或者二维码来方便其他人加入。奖项创建者不再需要自己来完成手动添加参奖者。
+4. 但应该赋予奖项创建者抽奖名单审核的权力。
+5. 参与抽奖者未来需要提供更多的信息。
+6. 客户端能实现以主键（priject_id/item_id）以外的值进行历史记录查询。
+7. 新建奖项不再需要手动提供id，直接输入名称、内容。
+8. 对于访问越界、空内容的错误处理写得更详细。
+9. 对于系统的其他错误处理需要写得更详细。
+10. 对软件整体的测试更应充分。
+11. 改进前端UI。
