@@ -1,6 +1,7 @@
 # bash scripts used while testing contracts
 
-# 0.0 edit the config.ini: ~/Library/Application Support/eosio/nodeos/config to enable plugins of eos private node you are about to start and 
+# 0.0 edit the config.ini: ~/Library/Application Support/eosio/nodeos/config 
+# to enable plugins of eos private node you are about to start and 
 nodeos
 #      or 
 # 0.1 Start the nodeos with  
@@ -139,3 +140,15 @@ cleos push action pa checkn '["vanel","3"]' -p vanel@active
 # and commands sent by CLi may have higher priority than by browsers
 #    solution: modify config.ini :
 #      max-transaction-time = 3000 #30
+
+# 10. integrate simple frontend: ref: https://eosio.github.io/eosjs/
+cd ${DappsDIR}/frontend
+git clone https://github.com/EOSIO/eosjs.git 
+cd eosjs
+npm install
+npm run build-web
+# then you can use
+#   <script src='eosjs/dist-web/eosjs-api.js'></script>
+#   <script src='eosjs/dist-web/eosjs-jsonrpc.js'></script>
+#   <script src='eosjs/dist-web/eosjs-jssig.js'></script>
+# in your frontend/index.html
