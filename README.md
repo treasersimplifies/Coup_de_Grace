@@ -1,4 +1,4 @@
-# Coup_de_Grace
+# Coup_ de_Grace
 The distinguished ability of PA(Phantom Assassin)
 
 Phantom Assassin refines her combat abilities, gaining a chance of delivering a devastating critical strike to enemy units. Stifling Dagger shares the same critical strike chance.
@@ -14,29 +14,39 @@ Phantom Assassin refines her combat abilities, gaining a chance of delivering a 
 	* 系统实现和部署
 	* 主要界面截图与说明
 	
-# 2 功能概述(Introduction)
+# 2 功能概述(Overview)
+This DApp achieves:
+
+1. Can create the Main Awards and add sub-awards under the main awards. For example, you can create the main prize of the "Association Activity Draw", and then add "First Prize" and "Second Prize" sub-scores to it. After creation, the transaction hash value for creating a award will be displayed.
+2. Can add unilateral award participants, specifically to sub-awards. For example, adding 10 participants to participate in the "second prize".
+3. Can unilaterally award a sub-award. And the results of the lottery will be automatically put on blockchain.
+4. Can query the history. You can query by the main award ID as the index value, or you can query the first **n** records in the history.
+
+
+Chinese:
+
 1. 能实现创建抽奖主奖项，并在主奖项下添加子奖项。比如创建“协会活动抽奖”这个主奖项，并在下面添加“一等奖”、“二等奖”等子奖项。创建后显示创建奖项的交易哈希值。
 2. 能单方面添加奖项参与者，具体到子奖项。比如添加10位参与抽“二等奖”。
 3. 能单方面对某一子奖项开奖。并将抽奖结果自动上链。
 4. 能查询历史记录。可以按主奖项ID为索引值进行查询，也可以查询历史中前n个记录。
 
-# 3 智能合约(Contract Part Design)
+# 3 智能合约(Contract)
 EOS的智能使用C++开发（也可以使用其他语言），限于时间所限，第一版抽奖软件比较简单，只需要一个[Surprise](https://github.com/treasersimplifies/Coup_de_Grace/tree/master/contract/Surprise)合约就能实现既定功能。
 
-在这个合约里定义/实现了如下内容：
-### action
+在这个合约里定义/实现了如下内容：(The following are defined in contracts :)
+### actions
 
 * showinfo:用于显示合约相关信息。       ```void showinfo();```
-* create:用于新建主奖项。      ```void create(const account_name author, uint64_t project_id, string& project_name);```
-* additem:用于向某个主奖项下添加子奖项。    ```void additem(const account_name author, uint64_t project_id, uint64_t item_id, string& item_name, uint32_t winumber, uint32_t maxnumber);```
-* addcad:用于向某主奖项下的子奖项添加参与者。    ```void addcad(const account_name author, uint64_t project_id, uint64_t item_id, string& cadname);```
-* activate:用于针对某主奖项下的子奖项的开奖。   ```void activate(const account_name author, uint64_t project_id, uint64_t item_id);```
-* checkbyid:用于查询奖项记录。   ```void checkbyid(const account_name author, uint64_t project_id);```
-* checkn:用于查询奖项记录。      ```void checkbyid(const account_name author, uint64_t project_id);```
+* create:用于新建主奖项(create a main reward)。      ```void create(const account_name author, uint64_t project_id, string& project_name);```
+* additem:用于向某个主奖项下添加子奖项(add sub-reward)。    ```void additem(const account_name author, uint64_t project_id, uint64_t item_id, string& item_name, uint32_t winumber, uint32_t maxnumber);```
+* addcad:用于向某主奖项下的子奖项添加参与者(add candidates)。    ```void addcad(const account_name author, uint64_t project_id, uint64_t item_id, string& cadname);```
+* activate:用于针对某主奖项下的子奖项的开奖(get lottery done)。   ```void activate(const account_name author, uint64_t project_id, uint64_t item_id);```
+* checkbyid:用于查询奖项记录(query reward by id)。   ```void checkbyid(const account_name author, uint64_t project_id);```
+* checkn:用于查询奖项记录(query n records)。      ```void checkbyid(const account_name author, uint64_t project_id);```
 
 ### 数据结构(data structure)
 
-1. 子奖项结构
+1. 子奖项结构(sub-reward structure)
 
 ```
 struct surpriseitem{
@@ -52,7 +62,7 @@ struct surpriseitem{
 };
 ```
 
-2. 主奖项结构
+2. 主奖项结构(main structure)
 
 ```
 struct surpriseprj{
@@ -69,16 +79,16 @@ struct surpriseprj{
 
 ```typedef multi_index<N(surpriseprj), surpriseprj> surpriseprjIndex;```
 
-然后是关于这个table的增、改、查操作等：
+然后是关于这个table的增、改、查操作等：(operations defined for this table)
 
 ```
 surpriseprjIndex surpriseprjs(_self, _self);
-//增：
+//增：add
 surpriseprjs.emplace(author, [&](auto& surpriseprj) {
     surpriseprj.id = project_id;
     surpriseprj.name = project_name;
 });
-//改：
+//改：update
 surpriseprjs.modify(iterator, author, [&](auto& surpriseprj) {
     surpriseprj.items.push_back(surpriseitem{
         item_id,
@@ -87,7 +97,7 @@ surpriseprjs.modify(iterator, author, [&](auto& surpriseprj) {
         maxnumber
     });
 });
-//查：
+//查：query
 auto theprj = surpriseprjs.get(project_id);
 print("||| Id: ", theprj.id);
 print(" ||- Name: ", theprj.name.c_str());
@@ -97,9 +107,9 @@ print(" ||- Items: ");
 ### 随机数(random number)
 EOS无法使用```#include<random>```，所以需要寻找其他的随机源。
 
-参考了：[generEOS/eosio.random](https://github.com/generEOS/eosio.random)和[Randomization in Contracts](https://developers.eos.io/eosio-cpp/docs/random-number-generation)
+参考了(referrence)：[generEOS/eosio.random](https://github.com/generEOS/eosio.random) and [Randomization in Contracts](https://developers.eos.io/eosio-cpp/docs/random-number-generation)
 
-原理是：通过区块数据来作为种子，产生哈希，比较不同的哈希，得出比较结果，把比较结果作为随机数。
+原理是：通过区块数据来作为种子，产生哈希，比较不同的哈希，得出比较结果，把比较结果作为随机数。(use block data as the seed)
 
 ```
 int lucky[MAX_CAD];//
@@ -140,7 +150,7 @@ surpriseprjs.modify(iterator, author, [&](auto& surpriseprj) {
 });
 ``` 
 
-# 4 前端(Frontend Part Design)
+# 4 前端(Frontend)
 前端界面如下：
 ![OverView](frontend/src/OverView2.png)
 因为前端比较简单，没有用什么框架或者前端库，所有内容直接写在一个html文件中了,需要引入如下文件，都位于eosjs库中（eosjs库的引入见下“5 系统实现和部署”）：
@@ -151,7 +161,7 @@ surpriseprjs.modify(iterator, author, [&](auto& surpriseprj) {
 <script src='eosjs/dist-web/eosjs-jsonrpc.js'></script>
 <script src='eosjs/dist-web/eosjs-jssig.js'></script>
 ```
-## 4.1界面
+## 4.1 界面(UI)
 前端的界面：分三部分，**顶部显示区域**、**中间按钮区域**、**底部查询显示区域**。
 
 ### 顶部显示区域
@@ -166,7 +176,7 @@ surpriseprjs.modify(iterator, author, [&](auto& surpriseprj) {
 进行查操作（按下查询按钮）后显示记录的区域。
 
 **注意：查询前最好按下“显示信息”按钮来看看链上有多少个抽奖记录，不能越界。**
-## 4.2 主要代码
+## 4.2 主要代码(Core Code)
 EOS提供了eosjs和eosjs2两个JavaScript库，能用来对交易进行签名和发送交易等操作。这里我使用的是eosjs。前端中的核心代码是利用EOS提供的JavaScript API和区块链节点建立通信（包括签名）和向智能合约推送action的部分。
 
 ### 建立通信
@@ -215,7 +225,7 @@ function pushAction(actionName, dataValue){
 ```
 实现这个推送action的函数后，之后的各种action推送都只要调用它就行，不需要自己重新针对每个action写一个函数。
 
-# 5 系统实现和部署
+# 5 系统实现和部署(Integrate and Deploy)
 ## 系统集成
 编写完合约和前端后进行集成，项目结构：
 
@@ -454,7 +464,7 @@ cleos是与区块链进行交互的主要命令，它包含很多子命令（仅
 	  system                      Send eosio.system contract action to the blockchain.
 	```
 
-# 6 测试与使用说明
+# 6 测试与使用说明(Test Examples)
 
 可以通过两种方式（两种类型的客户端）来测试智能合约：通过命令行（Cli）和通过Web端（JavaScript API）。
 ## 6.1 CLi 
@@ -508,8 +518,10 @@ cleos push action pa checkn '["vanel","3"]' -p vanel@active
 ```
 
 ## Web端测试
+Omitted here.
 
 略。
+
 
 
 # Futurn Plan
